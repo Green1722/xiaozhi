@@ -1,0 +1,19 @@
+# 微信自动化库（替换 pywechat，支持新版微信）
+wxauto>=3.9.0
+
+# MCP 框架
+mcp>=1.9.1
+
+# Web 服务
+starlette>=0.28.0
+uvicorn>=0.24.0
+sse-starlette>=1.6.5
+
+# 环境变量
+python-dotenv>=1.0.0
+
+# 命令行参数（Streamable HTTP 模式）
+click>=8.0.0
+
+# 异步支持
+anyio>=4.0.0

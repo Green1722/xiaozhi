@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "wechat": {
+      "command": "python",
+      "args": ["-m", "mcp_server_wechat"],
+      "env": {
+        "MCP_FOLDER_PATH": "C:\\Users\\sxc\\Documents\\mcp_wechat_history"
+      },
+      "disabled": false
+    }
+  }
+}

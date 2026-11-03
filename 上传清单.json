@@ -1,0 +1,236 @@
+{
+  "snapshot_date": "2026-11-03",
+  "source_root": "D:\\ICT大赛",
+  "counts": {
+    "files": 9513,
+    "bytes": 416041289
+  },
+  "redacted_files": [
+    "小智\\hight_weight\\README.md",
+    "小智\\hight_weight\\docs\\ESP32双板配置指南.md",
+    "小智\\hight_weight\\xiaozhi-esp32-main\\main\\boards\\zhengchen-cam\\zhengchen_cam_board.cc",
+    "小智\\hight_weight\\xiaozhi-esp32-main\\main\\boards\\zhengchen-cam-ml307\\zhengchen_cam_board_ml307.cc",
+    "小智\\hight_weight\\zhudong_mcp\\mcp_pipe.py",
+    "小智\\hight_weight\\zhudong_mcp\\README.md",
+    "小智\\hight_weight\\zhudong_mcp\\start.bat",
+    "小智\\hight_weight\\zhudong_mcp\\start.sh",
+    "小智\\hight_weight\\zhudong_mcp\\c++ver\\README.md",
+    "小智\\hight_weight\\zhudong_mcp\\c++ver\\examples\\BasicExample\\BasicExample.ino",
+    "小智\\hight_weight\\zhudong_mcp\\c++ver\\examples\\PhysicalExamControl\\config.h",
+    "小智\\hight_weight\\zhudong_mcp\\c++ver\\examples\\SmartSwitchExample\\SmartSwitchExample.ino",
+    "小智\\hight_weight\\zhudong_mcp\\c++ver\\examples\\XiaozhiEsp32MCP\\XiaozhiEsp32MCP.ino",
+    "小智\\hight_weight\\zhudong_mcp\\docs\\DEPLOY_RASPBERRY_PI.md",
+    "小智\\mcp_server_wechat-main\\mcp_pipe.py",
+    "小智\\mqtt\\mqtt_websocket_test.py",
+    "小智\\mqtt\\pages\\connect\\connect.js",
+    "小智\\xiaozhi-esp32-education\\main\\boards\\zhengchen-cam\\zhengchen_cam_board.cc",
+    "小智\\xiaozhi-esp32-education\\main\\boards\\zhengchen-cam-ml307\\zhengchen_cam_board_ml307.cc",
+    "小智\\xiaozhi_car\\mcp_pipe.py",
+    "小智\\xiaozhi_car\\start_car_control.bat",
+    "小智\\xiaozhi_car\\example\\mcp_pipe.py",
+    "小智\\xiaozhi_car\\example\\README.md",
+    "小智\\xiaozhi_car\\example\\start.bat",
+    "小智\\xiaozhi_car\\example\\start_simple.bat",
+    "小智\\xiaozhi_car\\example\\esp32_classroom_device\\esp32_classroom_device.ino",
+    "小智\\xiaozhi_first_aid\\example\\E-Paper_ESP32_Driver_Board_Code\\E-Paper_ESP32_Driver_Board_Code\\Loader_esp32wf\\srvr.h",
+    "小智\\xiaozhi_first_aid\\xiaozhi-esp32-main\\main\\boards\\zhengchen-cam\\zhengchen_cam_board.cc",
+    "小智\\xiaozhi_first_aid\\xiaozhi-esp32-main\\main\\boards\\zhengchen-cam-ml307\\zhengchen_cam_board_ml307.cc",
+    "小智\\xiaozhi_light_mcp\\README.md",
+    "小智\\xiaozhi_light_mcp\\start_mcp.bat",
+    "小智\\xiaozhi_light_mcp\\启动小智MCP.bat",
+    "小智\\xiaozhi_light_mcp\\esp32_remote_led\\esp32_remote_led_mqtt.ino",
+    "小智\\xiaozhi_light_mcp\\esp32_remote_led\\esp32_remote_led_mqtt\\esp32_remote_led_mqtt.ino",
+    "小智\\xiaozhi_light_mcp\\examplecode\\mcp_pipe.py",
+    "小智\\xiaozhi_light_mcp\\examplecode\\README.md",
+    "小智\\xiaozhi_light_mcp\\xiaozhi-esp32\\main\\boards\\zhengchen-cam\\zhengchen_cam_board.cc",
+    "小智\\xiaozhi_light_mcp\\xiaozhi-esp32\\main\\boards\\zhengchen-cam-ml307\\zhengchen_cam_board_ml307.cc",
+    "小智\\xiaozhi_remind\\example\\mcp_pipe.py",
+    "固件\\xiaozhi-esp32-zhengchen-minicam-ml307\\main\\boards\\zhengchen-cam-ml307\\zhengchen_cam_board_ml307.cc",
+    "固件\\xiaozhi-esp32-zhengchen-minicam-ml307\\main\\boards\\zhengchen-cam\\zhengchen_cam_board.cc"
+  ],
+  "excluded_files": [
+    {
+      "path": "xiaozhi-esp32-zhengchen-minicam-ml307.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 1085466247
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 402467629
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\CAM智能扩展板新版本打字V2.0版本教程\\固件跟源码\\xiaozhi-esp32-V2-CAM203DL.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 310290915
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\CAM智能扩展板新版本打字V2.0版本教程\\第1步开发板双击安装驱动\\CH341SER.EXE",
+      "reason": "archive/tool/build binary",
+      "bytes": 825280
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\CAM智能扩展板老版本套餐教程\\固件跟固件源码\\xiaozhi-esp32-CAM203DL固件源码.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 309978639
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\CAM智能扩展板老版本套餐教程\\第1步开发板双击安装驱动\\CH341SER.EXE",
+      "reason": "archive/tool/build binary",
+      "bytes": 825280
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\面包板DIY教程 ESP32-S3-CAM摄像头小智资料包\\ESP32-S3-CAM固件源码xiaozhi-esp32-main .zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 2205935
+    },
+    {
+      "path": "小智\\ESP32-S3-CAM带摄像头资料小智115\\面包板DIY教程 ESP32-S3-CAM摄像头小智资料包\\第1步开发板双击安装驱动\\CH341SER.EXE",
+      "reason": "archive/tool/build binary",
+      "bytes": 825280
+    },
+    {
+      "path": "小智\\mcp_server_wechat-main\\.env",
+      "reason": "local/private configuration"
+    },
+    {
+      "path": "小智\\mqtt\\mqtt.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 293752
+    },
+    {
+      "path": "小智\\mqtt\\project.private.config.json",
+      "reason": "local/private configuration"
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\espressif__esp_codec_dev\\device\\zl38063\\firmware\\libfirmware.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 114686
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.4\\libesp32.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 118858
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.4\\libesp32c2.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 175346
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.4\\libesp32c3.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 175282
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.4\\libesp32c5.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 234838
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.4\\libesp32s3.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 113186
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.5\\libesp32.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 121150
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.5\\libesp32c2.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 179494
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.5\\libesp32c3.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 179430
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.5\\libesp32c5.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 180146
+    },
+    {
+      "path": "小智\\RoPet_ESPS3_AI_EYE\\components\\vb6824\\libs\\idf5.5\\libesp32s3.a",
+      "reason": "archive/tool/build binary",
+      "bytes": 115478
+    },
+    {
+      "path": "小智\\xiaozhi_first_aid\\tools.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 65936
+    },
+    {
+      "path": "小智\\xiaozhi_light_mcp\\.env",
+      "reason": "local/private configuration"
+    },
+    {
+      "path": "小智\\小智_4G\\外壳文件.stl",
+      "reason": "archive/tool/build binary",
+      "bytes": 394684
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\1、恶魔之眼表情-丑且BUG多\\2、源码\\4G-LCD.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 30120402
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\1、恶魔之眼表情-丑且BUG多\\2、源码\\4G-NOLCD.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 30119352
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\1、恶魔之眼表情-丑且BUG多\\2、源码\\WIFI-LCD.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 30120409
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\1、恶魔之眼表情-丑且BUG多\\2、源码\\WIFI-NOLCD.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 30119331
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\2、可爱一点的表情-好用推荐\\源代码\\zhengchen-eye.zip",
+      "reason": "archive/tool/build binary",
+      "bytes": 294909634
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\2、可爱一点的表情-好用推荐\\表情包素材GIF\\表情包素材GIF.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 7847352
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\2、可爱一点的表情-好用推荐\\表情包素材GIF\\卡通\\卡通.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 598243
+    },
+    {
+      "path": "小智\\小智_4G\\1、程序\\2、可爱一点的表情-好用推荐\\表情包素材GIF\\蓝眼珠\\蓝眼珠.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 7248181
+    },
+    {
+      "path": "小智\\小智_4G\\5、烧录指导视频\\5、烧录指导.rar",
+      "reason": "archive/tool/build binary",
+      "bytes": 225860314
+    }
+  ],
+  "excluded_directory_names": [
+    ".claude",
+    ".git",
+    ".idea",
+    ".kiro",
+    ".venv",
+    ".vscode",
+    "__pycache__",
+    "build",
+    "chat_logs",
+    "dist",
+    "github-upload-xiaozhi",
+    "logs",
+    "managed_components",
+    "venv"
+  ]
+}

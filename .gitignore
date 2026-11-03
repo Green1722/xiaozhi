@@ -1,0 +1,15 @@
+**/build/
+**/managed_components/
+**/venv/
+**/.venv/
+**/__pycache__/
+**/dist/
+**/logs/
+**/chat_logs/
+**/.env
+**/*.pem
+**/*.key
+**/project.private.config.json
+*.zip
+*.rar
+*.7z

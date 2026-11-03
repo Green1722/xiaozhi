@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+; 为pywechat添加微信语言注册表项
+; 双击运行此文件导入注册表
+
+[HKEY_CURRENT_USER\Software\Tencent\WeChat]
+"LANG_ID"="2052"

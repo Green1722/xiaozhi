@@ -1,0 +1,9 @@
+{
+    "target": "esp32s3",
+    "builds": [
+        {
+            "name": "fpc-uart-tester",
+            "sdkconfig_append": []
+        }
+    ]
+}

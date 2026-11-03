@@ -1,0 +1,17 @@
+# MCP MQTT Server dependencies
+
+# MCP Server Framework
+mcp >= 1.8.1
+fastmcp >= 0.1.0
+
+# MQTT Client
+paho-mqtt >= 2.0.0
+
+# WebSocket for mcp_pipe
+websockets >= 11.0.3
+
+# HTTP Server for MCP (optional, for direct HTTP mode)
+uvicorn >= 0.30.0
+
+# Configuration management
+python-dotenv >= 1.0.0

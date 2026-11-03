@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "car-control": {
+      "type": "stdio",
+      "command": "C:\\Users\\sxc\\Desktop\\xiaozhi_car\\venv\\Scripts\\python.exe",
+      "args": ["car_control.py"]
+    }
+  }
+}

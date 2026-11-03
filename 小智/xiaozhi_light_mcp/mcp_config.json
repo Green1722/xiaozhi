@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "led_control": {
+      "type": "stdio",
+      "command": "dist\\xiaozhi_mqtt_server\\xiaozhi_mqtt_server.exe",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}

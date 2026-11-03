@@ -1,0 +1,10 @@
+<!--pages/receive/receive.wxml-->
+<view class="container">
+  
+    <view>topic:  espCJP/RE</view>
+    <view>湿度: {{humidity}}</view>
+    <view>温度: {{temperature}}</view>
+    <view>时间: {{date}}</view>
+
+</view>
+

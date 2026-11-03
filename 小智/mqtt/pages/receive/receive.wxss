@@ -1,0 +1,17 @@
+/* pages/receive/receive.wxss */
+
+.container{
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 50rpx;
+  
+  
+}
+
+.container>view{
+margin: 20rpx;
+  
+  
+}

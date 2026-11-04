@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import json
 import os
+import re
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
@@ -12,7 +14,7 @@ from typing import Literal
 import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 from sqlalchemy import DateTime, Numeric, String, UniqueConstraint, create_engine, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
@@ -72,6 +74,10 @@ def calculate_bmi(height_cm: Decimal, weight_kg: Decimal) -> Decimal:
     return (weight_kg / (meters * meters)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
+def iotda_signature(token: str, timestamp: str, nonce: str) -> str:
+    return hashlib.sha256(''.join(sorted((token, timestamp, nonce))).encode()).hexdigest()
+
+
 def serialize(row: Exam) -> dict:
     return {
         "id": row.id,
@@ -88,9 +94,24 @@ def serialize(row: Exam) -> dict:
     }
 
 
-def create_app(database_url: str | None = None, api_key: str | None = None) -> FastAPI:
+def create_app(database_url: str | None = None, api_key: str | None = None,
+               iotda_devices: dict | None = None, iotda_forward_key: str | None = None) -> FastAPI:
     database_url = database_url or os.environ.get("DATABASE_URL", "sqlite:///./data/exams.db")
     api_key = api_key or os.environ.get("HEALTH_API_KEY", "")
+    iotda_devices = (iotda_devices if iotda_devices is not None else
+                     json.loads(os.environ.get("IOTDA_DEVICES_JSON", "{}")))
+    iotda_forward_key = iotda_forward_key or os.environ.get("IOTDA_FORWARD_KEY", "")
+    if iotda_forward_key and not re.fullmatch(r"[A-Za-z0-9]{24,32}", iotda_forward_key):
+        raise RuntimeError("IOTDA_FORWARD_KEY must contain 24-32 ASCII letters or digits")
+    if iotda_forward_key and hmac.compare_digest(iotda_forward_key, api_key):
+        raise RuntimeError("IoTDA forwarding requires a separate credential")
+    for device_id, binding in iotda_devices.items():
+        if not isinstance(binding, dict) or not all(binding.get(k) for k in
+                                                   ("app_id", "product_id", "instrument_id", "source")):
+            raise RuntimeError("Each IoTDA device needs app/product/instrument/source binding")
+        ExamInput(id="config-check", instrument_id=binding["instrument_id"],
+                  height_cm=175, weight_kg=70, timestamp="2026-01-01T00:00:00Z",
+                  source=binding["source"])
     if len(api_key) < 24 or api_key == "REPLACE_ME":
         raise RuntimeError("Set HEALTH_API_KEY to a private random value of at least 24 characters")
     if database_url.startswith("sqlite:///./"):
@@ -116,6 +137,19 @@ def create_app(database_url: str | None = None, api_key: str | None = None) -> F
             raise HTTPException(401, "Invalid API key")
 
     protected = [Depends(authorize)]
+
+    def authorize_iotda(timestamp: str = Header(default=""), nonce: str = Header(default=""),
+                        signature: str = Header(default="")):
+        if not iotda_forward_key or not iotda_devices:
+            raise HTTPException(503, "IoTDA forwarding is not configured")
+        if (not re.fullmatch(r"[0-9]{1,20}", timestamp)
+                or not re.fullmatch(r"[A-Za-z0-9-]{1,128}", nonce)
+                or not re.fullmatch(r"[0-9a-f]{64}", signature)):
+            raise HTTPException(401, "Invalid IoTDA signature headers")
+        # Huawei iot_01_0001: sort token/timestamp/nonce, concatenate, SHA256.
+        expected = iotda_signature(iotda_forward_key, timestamp, nonce)
+        if not hmac.compare_digest(signature, expected):
+            raise HTTPException(401, "Invalid IoTDA forwarding key")
 
     @app.get("/healthz")
     def healthz():
@@ -154,6 +188,37 @@ def create_app(database_url: str | None = None, api_key: str | None = None) -> F
             if any(getattr(existing, k) != v for k, v in values.items()):
                 raise HTTPException(409, "Record id already exists with different measurement data")
             return {"success": True, "duplicate": True, "record": serialize(existing)}
+
+    @app.post("/api/iotda/properties", dependencies=[Depends(authorize_iotda)])
+    def iotda_properties(notification: dict):
+        # Official IoTDA device.property/report envelope. Never infer measurement
+        # time from arrival time or trust a device-supplied source/instrument id.
+        try:
+            if notification["resource"] != "device.property" or notification["event"] != "report":
+                raise ValueError("Unsupported notification")
+            header = notification["notify_data"]["header"]
+            binding = iotda_devices.get(header["device_id"])
+            if binding is None or any(header.get(k) != binding[k] for k in ("app_id", "product_id")):
+                raise HTTPException(403, "Device is not registered for this application/product")
+            services = notification["notify_data"]["body"]["services"]
+            matching = [s for s in services if s["service_id"] == "PhysicalExam"]
+            if len(matching) != 1:
+                raise ValueError("Exactly one PhysicalExam service is required")
+            service = matching[0]
+            # Require a device-reported collection timestamp, in properties.
+            # IoTDA service event_time can be supplied by the platform when absent
+            # on the device; it must not silently become measured_at.
+            properties = service["properties"]
+            stamp = properties["measured_at"]
+            if not isinstance(stamp, str) or not stamp.endswith("Z"):
+                raise ValueError("measured_at must explicitly use UTC Z")
+            measured_at = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+            payload = ExamInput(id=properties["record_id"], instrument_id=binding["instrument_id"],
+                                height_cm=properties["height_cm"], weight_kg=properties["weight_kg"],
+                                timestamp=measured_at, source=binding["source"])
+        except (KeyError, TypeError, ValueError, ValidationError):
+            raise HTTPException(422, "Invalid or incomplete physical exam notification") from None
+        return ingest(payload)
 
     @app.get("/api/exams", dependencies=protected)
     def list_exams(instrument_id: str | None = None, limit: int = Query(50, ge=1, le=500)):

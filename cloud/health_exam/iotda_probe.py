@@ -86,7 +86,9 @@ def probe(config, tls_only=False):
             result['mqtt_authenticated'] = True
             record_id = 'synthetic-' + now.strftime('%Y%m%dT%H%M%S%fZ')
             payload = {'services': [{'service_id': config.get('service_id', 'PhysicalExam'),
-                        'properties': {'record_id': record_id, 'height_cm': 175.0,
+                        'properties': {'record_id': record_id,
+                                       'measured_at': now.isoformat().replace('+00:00', 'Z'),
+                                       'height_cm': 175.0,
                                        'weight_kg': 70.0}}]}
             topic = f'$oc/devices/{device_id}/sys/properties/report'
             conn.sendall(packet(0x32, mqtt_string(topic) + b'\x00\x01'

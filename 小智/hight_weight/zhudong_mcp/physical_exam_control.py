@@ -64,6 +64,8 @@ XIAOZHI_SPEAK_TOPIC_ALT = os.environ.get('XIAOZHI_SPEAK_TOPIC_ALT', '')
 # 数据上传配置（可通过环境变量覆盖）
 UPLOAD_URL = os.environ.get('PHYSICAL_EXAM_UPLOAD_URL', '')
 UPLOAD_ENABLED = os.environ.get('PHYSICAL_EXAM_UPLOAD_ENABLED', 'false').lower() == 'true'
+UPLOAD_API_KEY = os.environ.get('PHYSICAL_EXAM_UPLOAD_API_KEY', '')
+INSTRUMENT_ID = os.environ.get('PHYSICAL_EXAM_INSTRUMENT_ID', '')
 
 # 小智 TTS 推送（据 websocket.md，设备通过 WebSocket 从服务器接收 type:"tts" 与音频；若平台提供 HTTP 接口可在此配置）
 XIAOZHI_TTS_PUSH_URL = os.environ.get('XIAOZHI_TTS_PUSH_URL', '')
@@ -157,10 +159,13 @@ def upload_exam_data(record: Dict[str, Any]) -> bool:
 
     try:
         data = json.dumps(record, ensure_ascii=False).encode('utf-8')
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        if UPLOAD_API_KEY:
+            headers['X-API-Key'] = UPLOAD_API_KEY
         req = urllib.request.Request(
             UPLOAD_URL,
             data=data,
-            headers={'Content-Type': 'application/json; charset=utf-8'},
+            headers=headers,
             method='POST'
         )
         with urllib.request.urlopen(req, timeout=10) as resp:
@@ -176,6 +181,29 @@ def upload_exam_data(record: Dict[str, Any]) -> bool:
     except Exception as e:
         logger.error(f"上传异常: {e}")
         return False
+
+
+def get_cloud_exam_records(limit: int = 10, instrument_id: str = "") -> dict:
+    """查询云端持久化记录；云端模式故障直接报告，不伪装成空记录。"""
+    import urllib.parse
+    params = urllib.parse.urlencode({
+        'limit': min(limit, 500) if limit > 0 else 500,
+        **({'instrument_id': instrument_id} if instrument_id else {}),
+    })
+    request = urllib.request.Request(
+        UPLOAD_URL.rstrip('/') + '?' + params,
+        headers={'X-API-Key': UPLOAD_API_KEY},
+    )
+    with urllib.request.urlopen(request, timeout=10) as response:
+        body = json.load(response)
+    records = [{**record, 'id': record['source_record_id'], 'timestamp': record['measured_at']}
+               for record in body['records']]
+    return {
+        'success': True, 'source': 'cloud', 'records': records,
+        'total_count': body['total_count'], 'returned_count': len(records),
+        'filter_instrument_id': instrument_id or '(全部)',
+        'message': '记录来自云端；播报状态以speech_status为准。单次最多返回500条。',
+    }
 
 
 def on_mqtt_connect(client, userdata, flags, rc):
@@ -309,7 +337,7 @@ def process_and_speak(
 
     record = {
         'id': record_id or f"exam_{int(time.time() * 1000)}",
-        'instrument_id': instrument_id,
+        'instrument_id': instrument_id or INSTRUMENT_ID,
         'height_cm': height_cm,
         'weight_kg': weight_kg,
         'bmi': bmi,
@@ -340,6 +368,8 @@ def process_and_speak(
         'success': True,
         'record': record,
         'advice_spoken': speak_ok,
+        'mqtt_publish_accepted': speak_ok,
+        'playback_confirmed': False,
         'data_uploaded': upload_ok,
         'tts_push_ok': tts_push_ok,
         'tts_text': advice_text,
@@ -477,6 +507,12 @@ def get_exam_records(limit: int = 10, instrument_id: str = "") -> dict:
     Returns:
         体检记录列表
     """
+    if UPLOAD_ENABLED and UPLOAD_URL:
+        try:
+            return get_cloud_exam_records(limit, instrument_id)
+        except Exception:
+            logger.error("云端体检记录查询失败")
+            return {"success": False, "source": "cloud", "error": "云端记录暂不可用，请勿将查询故障解释为没有历史记录"}
     try:
         with exam_records_lock:
             all_records = exam_records.copy()
@@ -596,12 +632,15 @@ def get_last_person_height_weight(instrument_id: str = "") -> dict:
     """
     try:
         # 获取最后一条体检记录（按仪器序号筛选）
-        with exam_records_lock:
-            if instrument_id:
-                candidate_records = [r for r in exam_records if r.get('instrument_id', '') == instrument_id]
-            else:
-                candidate_records = exam_records.copy()
-            has_records = len(candidate_records) > 0
+        if UPLOAD_ENABLED and UPLOAD_URL:
+            candidate_records = get_cloud_exam_records(1, instrument_id)['records']
+        else:
+            with exam_records_lock:
+                if instrument_id:
+                    candidate_records = [r for r in exam_records if r.get('instrument_id', '') == instrument_id]
+                else:
+                    candidate_records = exam_records.copy()
+        has_records = len(candidate_records) > 0
 
         if not has_records:
             msg = f"仪器 {instrument_id} 暂无体检记录" if instrument_id else "系统刚重启或暂未收到任何测量数据"
@@ -634,6 +673,8 @@ def get_last_person_height_weight(instrument_id: str = "") -> dict:
         # 构建推送数据（仅包含身高体重）
         push_data = {
             'id': record_id,
+            'instrument_id': last_record.get('instrument_id', '') or INSTRUMENT_ID,
+            'source': last_record.get('source', 'measured'),
             'height_cm': height_cm,
             'weight_kg': weight_kg,
             'bmi': bmi,

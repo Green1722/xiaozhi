@@ -1,0 +1,8 @@
+{
+  "id": "synthetic-001",
+  "instrument_id": "DEMO-01",
+  "height_cm": 175.0,
+  "weight_kg": 70.0,
+  "timestamp": "2026-11-04T10:00:00+08:00",
+  "source": "synthetic"
+}

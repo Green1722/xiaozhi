@@ -1,0 +1,58 @@
+{
+  "fetched_date": "2026-11-04",
+  "source_url": "https://apigw-04.huawei.com/api/services/lras/cams/v1/comps/queryHtmlContext?zoneId=98269700&X-HW-ID=com.huawei.prm.talent&language=zh_CN",
+  "page_url": "https://e.huawei.com/cn/talent/#/ict/innovation-details?zoneCode=027425&zoneId=98269700&compId=85132021&type=C002",
+  "comp_id": 85132021,
+  "zone_id": 98269700,
+  "last_update": "2026-11-04T02:00:33.000+0800",
+  "saved_response_sha256": "328e81ae8b093da8880250af748ecbaaf591b8edfc27f51edef8a1b28fb9c7fc",
+  "modules": [
+    {
+      "tag_id": "ZM01",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM03",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM06",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM05",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM04",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM02",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    },
+    {
+      "tag_id": "ZM07",
+      "last_update": "2026-10-28T17:19:10.000+0800"
+    }
+  ],
+  "score_weights": {
+    "preliminary": {
+      "innovation": 60,
+      "application_value": 40
+    },
+    "china_final": {
+      "innovation": 40,
+      "application_value": 35,
+      "completeness_demo": 15,
+      "presentation": 10
+    },
+    "global_final": {
+      "innovation": 40,
+      "application_value": 30,
+      "completeness_demo": 15,
+      "adoption": 10,
+      "presentation": 5
+    }
+  }
+}

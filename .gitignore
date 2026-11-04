@@ -13,3 +13,8 @@
 *.zip
 *.rar
 *.7z
+**/.pytest_cache/
+/data/
+/artifacts/
+**/*.db
+**/.env.*.local

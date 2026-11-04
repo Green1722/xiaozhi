@@ -1,0 +1,13 @@
+services:
+  health-exam:
+    build:
+      context: ../..
+      dockerfile: cloud/health_exam/Dockerfile
+    env_file: .env
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - exam-data:/app/data
+    restart: unless-stopped
+volumes:
+  exam-data:

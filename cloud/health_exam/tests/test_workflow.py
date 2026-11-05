@@ -145,7 +145,8 @@ def test_actual_legacy_upload_function_feeds_cloud(client, monkeypatch):
 
     monkeypatch.setattr(urllib.request, "urlopen", urlopen)
     namespace = {"Dict": dict, "Any": object, "UPLOAD_ENABLED": True, "UPLOAD_URL": "https://example.invalid/api/exams",
-                 "UPLOAD_API_KEY": KEY, "json": json, "urllib": urllib, "logger": logging.getLogger("test")}
+                 "UPLOAD_API_KEY": KEY, "upload_queue": None, "json": json,
+                 "urllib": urllib, "logger": logging.getLogger("test")}
     exec(compile(ast.Module(body=[function], type_ignores=[]), str(source), "exec"), namespace)
     assert namespace["upload_exam_data"](PAYLOAD)
     rows = client.get("/api/exams", headers=HEADERS).json()["records"]
@@ -184,7 +185,7 @@ def test_real_cloud_query_helper_can_feed_legacy_latest_query(client, monkeypatc
 
     monkeypatch.setattr(urllib.request, "urlopen", urlopen)
     namespace = {"UPLOAD_URL": "https://example.invalid/api/exams", "UPLOAD_API_KEY": KEY,
-                 "json": json, "urllib": urllib}
+                 "upload_queue": None, "json": json, "urllib": urllib}
     exec(compile(ast.Module(body=[function], type_ignores=[]), str(source), "exec"), namespace)
     result = namespace["get_cloud_exam_records"](1, "DEMO-01")
     assert result["source"] == "cloud" and result["total_count"] == 1

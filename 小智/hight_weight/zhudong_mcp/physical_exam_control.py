@@ -11,6 +11,8 @@ from typing import Dict, Any, Optional
 import os
 import urllib.request
 import urllib.error
+import sqlite3
+from upload_queue import UploadQueue
 
 # 配置日志 - 输出到stderr，避免干扰MCP stdio通信
 logging.basicConfig(
@@ -66,6 +68,19 @@ UPLOAD_URL = os.environ.get('PHYSICAL_EXAM_UPLOAD_URL', '')
 UPLOAD_ENABLED = os.environ.get('PHYSICAL_EXAM_UPLOAD_ENABLED', 'false').lower() == 'true'
 UPLOAD_API_KEY = os.environ.get('PHYSICAL_EXAM_UPLOAD_API_KEY', '')
 INSTRUMENT_ID = os.environ.get('PHYSICAL_EXAM_INSTRUMENT_ID', '')
+UPLOAD_QUEUE_PATH = os.environ.get('PHYSICAL_EXAM_UPLOAD_QUEUE_PATH', '')
+upload_queue = None
+upload_stop = threading.Event()
+
+
+def retry_uploads():
+    while not upload_stop.is_set():
+        try:
+            if upload_queue.send():
+                continue
+        except sqlite3.Error:
+            logger.exception("补传队列数据库操作失败")
+        upload_stop.wait(5)
 
 # 小智 TTS 推送（据 websocket.md，设备通过 WebSocket 从服务器接收 type:"tts" 与音频；若平台提供 HTTP 接口可在此配置）
 XIAOZHI_TTS_PUSH_URL = os.environ.get('XIAOZHI_TTS_PUSH_URL', '')
@@ -157,6 +172,14 @@ def upload_exam_data(record: Dict[str, Any]) -> bool:
         logger.debug("数据上传未配置或已禁用，跳过上传")
         return False
 
+    if upload_queue is not None:
+        try:
+            with upload_queue.lock:
+                return upload_queue.send(upload_queue.enqueue(record))
+        except (sqlite3.Error, OSError, OverflowError, ValueError, KeyError):
+            logger.exception("持久化上传失败")
+            return False
+
     try:
         data = json.dumps(record, ensure_ascii=False).encode('utf-8')
         headers = {'Content-Type': 'application/json; charset=utf-8'}
@@ -192,7 +215,7 @@ def get_cloud_exam_records(limit: int = 10, instrument_id: str = "") -> dict:
     })
     request = urllib.request.Request(
         UPLOAD_URL.rstrip('/') + '?' + params,
-        headers={'X-API-Key': UPLOAD_API_KEY},
+        headers={'X-Health-API-Key' if upload_queue is not None else 'X-API-Key': UPLOAD_API_KEY},
     )
     with urllib.request.urlopen(request, timeout=10) as response:
         body = json.load(response)
@@ -720,7 +743,7 @@ def get_last_person_height_weight(instrument_id: str = "") -> dict:
                 return {
                     "success": False,
                     "error": "推送失败",
-                    "message": "向服务器推送数据时发生错误，请检查网络连接和服务器状态",
+                    "message": "本次未确认上传，请检查补传队列和服务器状态",
                     "data": {
                         "height_cm": height_cm,
                         "weight_kg": weight_kg,
@@ -741,6 +764,8 @@ def get_last_person_height_weight(instrument_id: str = "") -> dict:
 
 
 if __name__ == "__main__":
+    if UPLOAD_ENABLED and UPLOAD_URL and UPLOAD_QUEUE_PATH:
+        upload_queue = UploadQueue(UPLOAD_QUEUE_PATH, UPLOAD_URL, UPLOAD_API_KEY)
     if init_mqtt():
         logger.info("体检中心小智 MCP 服务已启动")
         logger.info(f"MQTT 服务器: {MQTT_BROKER}:{MQTT_PORT}")
@@ -767,6 +792,8 @@ if __name__ == "__main__":
     try:
         # 启动MCP服务（使用stdio传输）
         # 注意：MCP服务通过stdio与外部通信，所有日志已配置输出到stderr
+        if upload_queue is not None:
+            threading.Thread(target=retry_uploads, daemon=True).start()
         mcp.run(transport="stdio")
     except KeyboardInterrupt:
         logger.info("服务被用户中断")
@@ -776,6 +803,7 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc(file=sys.stderr)
     finally:
+        upload_stop.set()
         # 清理资源
         if serial_reader:
             try:

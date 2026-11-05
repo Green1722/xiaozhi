@@ -132,8 +132,10 @@ def create_app(database_url: str | None = None, api_key: str | None = None,
 
     app = FastAPI(title="小智体检云端", version="0.1.0", lifespan=lifespan)
 
-    def authorize(x_api_key: str = Header(default="")):
-        if not hmac.compare_digest(x_api_key.encode(), api_key.encode()):
+    def authorize(x_api_key: str = Header(default=""), x_health_api_key: str = Header(default="")):
+        # Dedicated header avoids gateways consuming their own X-API-Key header.
+        supplied = x_health_api_key or x_api_key
+        if not hmac.compare_digest(supplied.encode(), api_key.encode()):
             raise HTTPException(401, "Invalid API key")
 
     protected = [Depends(authorize)]

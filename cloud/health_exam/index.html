@@ -14,7 +14,7 @@ body{font:16px/1.6 system-ui,sans-serif;color:#192b3b;background:#f5f7fa;margin:
 const statusText=document.getElementById('status'), body=document.getElementById('rows');
 const labels={unconfirmed:'未确认',requested:'已请求',device_confirmed:'设备已确认',failed:'失败'};
 async function api(path, method='GET'){
- const res=await fetch(path,{method,headers:{'X-API-Key':document.getElementById('key').value}});
+ const res=await fetch(path,{method,headers:{'X-Health-API-Key':document.getElementById('key').value}});
  if(!res.ok){let msg=await res.json().catch(()=>({}));const errors={401:'访问密钥不正确，请重新输入。',503:'模型服务尚未配置，暂时无法生成AI说明。',502:'模型服务暂时不可用，请稍后重试。'};throw new Error(errors[res.status]||msg.detail||`请求失败 ${res.status}`)}return res.json();
 }
 document.getElementById('load').onclick=async()=>{

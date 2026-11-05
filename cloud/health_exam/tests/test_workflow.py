@@ -32,6 +32,15 @@ def test_authentication_blocks_read_and_write(client):
     assert client.get("/api/exams", headers={"X-API-Key": "wrong"}).status_code == 401
 
 
+def test_dedicated_health_header_for_proxy(client):
+    headers = {"X-Health-API-Key": KEY}
+    assert client.post("/api/exams", headers=headers, json=PAYLOAD).status_code == 200
+    assert client.get("/api/exams", headers=headers).json()["total_count"] == 1
+    assert client.get("/api/exams", headers={"X-Health-API-Key": "wrong"}).status_code == 401
+    # Explicit dedicated credentials take precedence; no fallback on a bad value.
+    assert client.get("/api/exams", headers={**HEADERS, "X-Health-API-Key": "wrong"}).status_code == 401
+
+
 def test_known_bmi_and_legacy_fields_not_trusted(client):
     # Independent reference: 70 / (1.75**2) = 22.857142..., rounded to 22.86.
     response = ingest(client, bmi=99, advice="untrusted", patient_name="not stored")

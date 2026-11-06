@@ -57,7 +57,7 @@ def read_packet(conn):
     raise ValueError('Malformed MQTT remaining length')
 
 
-def probe(config, tls_only=False):
+def probe(config, tls_only=False, *, height_cm=175.0, weight_kg=70.0):
     host = config['host']
     if config.get('port', 8883) != 8883:
         raise ValueError('This probe requires MQTTS port 8883')
@@ -88,8 +88,8 @@ def probe(config, tls_only=False):
             payload = {'services': [{'service_id': config.get('service_id', 'PhysicalExam'),
                         'properties': {'record_id': record_id,
                                        'measured_at': now.isoformat().replace('+00:00', 'Z'),
-                                       'height_cm': 175.0,
-                                       'weight_kg': 70.0}}]}
+                                       'height_cm': height_cm,
+                                       'weight_kg': weight_kg}}]}
             topic = f'$oc/devices/{device_id}/sys/properties/report'
             conn.sendall(packet(0x32, mqtt_string(topic) + b'\x00\x01'
                                 + json.dumps(payload).encode()))
@@ -97,7 +97,7 @@ def probe(config, tls_only=False):
                 header, response = read_packet(conn)
                 if header == 0x40 and response == b'\x00\x01':
                     result.update(puback_received=True, record_id=record_id,
-                                  synthetic_height_cm=175.0, synthetic_weight_kg=70.0)
+                                  synthetic_height_cm=height_cm, synthetic_weight_kg=weight_kg)
                     conn.sendall(b'\xe0\x00')
                     return result
             raise ConnectionError('No matching PUBACK; platform parsing is not confirmed')

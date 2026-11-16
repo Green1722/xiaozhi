@@ -1,0 +1,6 @@
+bleak==3.1.0
+httpx==0.28.1
+mcp==1.30.0
+pycryptodome==4.5.0
+python-dotenv==1.2.4
+websockets==17.4

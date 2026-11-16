@@ -18,3 +18,4 @@
 /artifacts/
 **/*.db
 **/.env.*.local
+/.s200-private/
